@@ -210,6 +210,179 @@ int insert(Node* head, int key)
 
 int deleteNode(Node* head, int key)
 {
+	Node* lead =NULL;
+	Node* pre=NULL; //바꿀 노드 위치 저장 
+	
+	Node* temp=NULL;
+	
+	lead = head->left; // 루트노드 
+	
+	if(lead=NULL){ //트리에 노드가 존재하지 않으면
+	    printf("이 노드는 트리에 없습니다.\n");
+	}
+	
+	while(lead) //트리에 노드가 하나 이상일 때 
+	{
+		if(lead->key == key) //키값을 발견하면 반복문 탈출 
+		{
+			break;
+		}
+		
+		else if((lead->key) > key) //노드의 키값보다 작은 경우 
+		{
+			if(lead->left != NULL) //리드노드의 다음 위치가 비어있지 않으면 
+			{
+				pre=lead; //리드의 이전위치 저장 
+				lead=lead->left; // 리드를 이동 
+			 } 
+			 
+			else // 리드노드의 다음위치가 비어있다면
+			{
+				printf("이 노드는 트리에 존재하지 않습니다.\n");
+				return 0; 
+			 } 
+		}
+		
+		else if((lead->key) < key) //노드의 키값보다 큰 경우
+		{
+			if(lead->right != NULL) //리드의 다음 위치가 널이 아닌경우
+			{
+				pre=lead; //리드의 이전위치 저장
+				lead=lead->right; //리드 이동 
+			 } 
+			
+			else //리드의 다음위치가 비어있다면
+			{
+				printf("이 노드는 트리에 없습니다.\n");
+				return 0; 
+			 } 
+		 } 
+	}
+	
+	if((lead->left == NULL) && (lead->right == NULL)) //리프노드인 경우 
+	{
+		if(pre==NULL) //노드가 유일할때
+		{
+			free(lead);
+			head->left=NULL; 
+			return 0;
+		 } 
+		 
+		if(lead->key > pre->key) //리프노드중에 부모노드의 오른쪽에 위치 했던 노드
+		{
+			free(lead);
+			pre->right=NULL; 
+		 }
+		
+		else // 왼쪽에 위치하던 노드  
+		{
+			free(lead);
+			pre->left=NULL;
+		}
+	}
+	
+	else //리프노드가 아닌경우
+	{
+		 //자식노드가 한개인경우 
+		 if(((lead->left != NULL) && (lead->right == NULL)) || ((lead->left == NULL) && (lead->right != NULL)))
+		 {
+		 	if(head->left == lead) //루트노드이 경우의 수 
+		 	{
+		 		if(lead->left != NULL) //왼쪽 자식 노드를 갖는 경우
+				 {
+				 	head->left = lead->left;
+				 	free(lead); 
+				  }
+				
+				else // 오른쪽 자식 노드를 갖는 경우   
+				{
+					head->left = lead->right;
+					free(lead);
+				}
+			 }
+			 
+			 else //루트노드가 아닌경우 
+			 {
+			    if(lead->key > pre->key) //리드의 키가 이전키보다 큰경우 
+				{
+					if(lead->left != NULL) //왼쪽 자식 노드를 가질 때 
+					{
+						pre->right=lead->left;
+						free(lead); 
+					}
+					
+					else //오른쪽으로 가지는 경우
+					{
+						pre->right=lead->right;
+						free(lead); 
+					 } 
+				} 
+				 
+				 else // 리드의 키가 이전 키보다 작을 경우
+				{
+				 	if(lead->left != NULL) //왼쪽 자식 노드를 한개 가지면
+					{
+						pre->left=lead->left;
+						free(lead); 
+					}
+					
+					else //오른쪽 자식노드를 한개 가지면
+					{
+						pre->left=lead->right;
+						free(lead); 
+					} 
+				 	
+				} 
+			 }
+		 }
+		 
+		 else //자식노드로 두개를 가질 경우의 수 
+		 {
+		 	 temp=lead;
+			 pre=lead;
+			 lead=lead->left; //왼쪽 노드중 제일 큰노드를 위로 올리는 방식
+			 
+			 if(!(lead->right)) //왼쪽 노드가 가장 큰 노드인 경우의 수
+			 {
+			 	if(lead->left == NULL) //왼쪽에 자식노드가 없으면
+				 {
+				 	pre->key=lead->key; 
+					pre->left=NULL;
+					free(lead); 
+				 }
+				 else //왼쪽에 자식노드가 있는 경우의 수 
+				 {
+				 	pre->key=lead->key;
+					pre->left=lead->left;
+					free(lead); 
+				 }
+				 
+				 return 0;
+			  } 
+			  
+			  while(lead->right) //오른쪽에 노드가 남았을때 끝까지
+			  {
+			  	   pre=lead; //이전노드 남기기 
+			  	   lead=lead->right; //오른쪽 노드로 한칸씩 이동 
+			   } 
+			   
+			  temp->key=lead->key;
+			  
+			  if(lead->left != NULL) //오른쪽 끝노드가 왼쪽 자식노드를 갖는 경우의 수
+			  {
+			  	   pre->right=lead->left;
+				   free(lead);  
+			  }
+			  else // 왼쪽 자식 노드를 갖지 않으면 
+			  {
+			  	   pre->right=NULL;
+			       free(lead); 
+			  }
+		 }
+	 } 
+	 	
+		
+	 return 0; 
 }
 
 
